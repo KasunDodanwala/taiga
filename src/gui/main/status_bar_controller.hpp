@@ -39,6 +39,7 @@ public:
     Sync,
     Playback,
     Export,
+    Torrents,
     Selection,
   };
 

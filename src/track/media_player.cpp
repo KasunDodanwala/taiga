@@ -51,7 +51,21 @@ bool parsePlayersData(std::vector<Player>& players) {
   }
 
   // @TODO: Allow user to override via file in data directory
-  return anisthesia::ParsePlayersData(file.toStdString(), players);
+  if (!anisthesia::ParsePlayersData(file.toStdString(), players)) {
+    return false;
+  }
+
+#ifndef Q_OS_WINDOWS
+  // Players that only exist on Linux and other Unix-like systems
+  if (const auto unixFile = base::readFile(":/players-unix.anisthesia"); !unixFile.isEmpty()) {
+    std::vector<Player> unixPlayers;
+    if (anisthesia::ParsePlayersData(unixFile.toStdString(), unixPlayers)) {
+      players.append_range(unixPlayers);
+    }
+  }
+#endif
+
+  return true;
 }
 
 std::vector<Player> getEnabledPlayers(const std::vector<Player>& players) {

@@ -32,6 +32,9 @@
 #include "gui/utils/theme.hpp"
 #include "gui/utils/widgets.hpp"
 #include "media/anime_db.hpp"
+#include "track/episode.hpp"
+#include "track/play.hpp"
+#include "track/recognition.hpp"
 
 namespace gui {
 
@@ -71,6 +74,15 @@ void LibraryMenu::rename() const {
 
 void LibraryMenu::openPath(const QString& path) {
   if (base::isExecutableFile(path)) return;  // avoid running potentially dangerous files
+
+  // Video files go to Kodi when "Play episodes in Kodi" is enabled.
+  if (const QFileInfo info{path}; info.isFile()) {
+    const auto episode = track::recognition::parseFileInfo(info);
+    if (track::recognition::isVideoFile(episode)) {
+      track::playFile(path);
+      return;
+    }
+  }
 
   QDesktopServices::openUrl(QUrl::fromLocalFile(path));
 }

@@ -28,6 +28,7 @@ class SettingsDialog;
 namespace gui {
 
 class SettingsPage;
+class SettingsPageTorrents;
 
 class SettingsDialog final : public QDialog {
   Q_OBJECT
@@ -37,13 +38,16 @@ public:
   SettingsDialog(QWidget* parent);
   ~SettingsDialog() = default;
 
-  static void show(QWidget* parent);
+  // `section` is the name of an item in the tree, e.g. "Media server" or "media-server"
+  static void show(QWidget* parent, const QString& section = {});
 
+  void setCurrentSection(const QString& section);
   void accept() override;
 
 private:
   Ui::SettingsDialog* ui_ = nullptr;
   QList<SettingsPage*> pages_;
+  SettingsPageTorrents* torrentsPage_ = nullptr;
 };
 
 }  // namespace gui

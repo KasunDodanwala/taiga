@@ -24,6 +24,7 @@
 #include <anisthesia.hpp>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "track/episode.hpp"
@@ -71,6 +72,22 @@ private:
   std::vector<player_t> players_;
 
   QTimer* pollTimer_;
+
+#ifndef Q_OS_WINDOWS
+  using result_t = std::pair<player_t, media_t>;
+
+  // Taiga's own DLNA media server, which knows exactly what each client is streaming
+  std::optional<result_t> pollMediaServer();
+  // Kodi, via its JSON-RPC API (optional, see `Settings::kodiDetection`)
+  std::optional<result_t> pollKodi(const std::vector<player_t>& players);
+#ifdef Q_OS_LINUX
+  // Media players (including media servers such as Kodi's UPnP/DLNA server) via Anisthesia, the
+  // same way as on Windows
+  std::optional<result_t> pollPlayers(const std::vector<player_t>& players);
+  int currentProcessId_ = 0;
+#endif
+  bool playerPaused_ = false;
+#endif
 };
 
 inline Detection* detection() {

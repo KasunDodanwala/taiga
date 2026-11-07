@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
     <file alias="players.anisthesia">../../deps/anisthesia/data/players.anisthesia</file>
+    <file alias="players-unix.anisthesia">players-unix.anisthesia</file>
   </qresource>
 </RCC>

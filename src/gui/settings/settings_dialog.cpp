@@ -18,14 +18,23 @@
 
 #include "settings_dialog.hpp"
 
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QTreeWidgetItemIterator>
+#include <algorithm>
+
 #include "base/string.hpp"
 #include "gui/settings/settings_page_accounts.hpp"
 #include "gui/settings/settings_page_advanced.hpp"
 #include "gui/settings/settings_page_application.hpp"
+#include "gui/settings/settings_page_discord.hpp"
+#include "gui/settings/settings_page_kodi.hpp"
 #include "gui/settings/settings_page_library.hpp"
+#include "gui/settings/settings_page_media_server.hpp"
 #include "gui/settings/settings_page_media_players.hpp"
 #include "gui/settings/settings_page_recognition.hpp"
 #include "gui/settings/settings_page_streaming.hpp"
+#include "gui/settings/settings_page_torrents.hpp"
 #include "gui/utils/theme.hpp"
 #include "ui_settings_dialog.h"
 
@@ -39,6 +48,9 @@ constexpr int kPageRole = Qt::UserRole;
 
 SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent), ui_(new Ui::SettingsDialog) {
   ui_->setupUi(this);
+
+  // Large enough for the tallest pages (e.g. Media server) to fit without scrolling
+  resize(std::max(width(), 940), std::max(height(), 720));
 
 #ifdef Q_OS_WINDOWS
   enableMicaBackground(this);
@@ -61,26 +73,36 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent), ui_(new Ui::S
     if (!page) item->setDisabled(true);
   };
 
+  // Pages that build their widgets in code
+  auto discordPage = new SettingsPageDiscord(ui_, this);
+  auto kodiPage = new SettingsPageKodi(ui_, this);
+  auto mediaServerPage = new SettingsPageMediaServer(ui_, this);
+  auto torrentsPage = new SettingsPageTorrents(ui_, this);
+  torrentsPage_ = torrentsPage;
+  for (auto widget : {discordPage->widget(), kodiPage->widget(), mediaServerPage->widget(),
+                      torrentsPage->widget()}) {
+    ui_->stackedWidget->addWidget(widget);
+  }
+
   add_item("account_circle", "Accounts", ui_->accountsPage);
   add_item("web_asset", "Application", ui_->applicationPage);
   add_item("list_alt", "Anime List");
   add_item("folder", "Library", ui_->libraryPage);
+  add_item("play_arrow", "Media server", mediaServerPage->widget());
   {
     auto item = add_item("check_circle", "Recognition", ui_->recognitionPage);
     add_child(item, "Media players", ui_->mediaPlayersPage);
+    add_child(item, "Kodi", kodiPage->widget());
     add_child(item, "Streaming", ui_->streamingPage);
   }
   {
-    auto item = add_item("share", "Sharing");
-    add_child(item, "Discord");
+    auto item = add_item("share", "Sharing", discordPage->widget());
+    add_child(item, "Discord", discordPage->widget());
     add_child(item, "HTTP");
     add_child(item, "mIRC");
   }
-  {
-    auto item = add_item("rss_feed", "Torrents");
-    add_child(item, "Downloads");
-    add_child(item, "Filters");
-  }
+  // Discovery, Downloads and Filters are tabs of this page, as in Taiga 1.x
+  add_item("rss_feed", "Torrents", torrentsPage->widget());
   {
     auto item = add_item("warning", "Advanced", ui_->advancedPage);
     add_child(item, "Cache");
@@ -99,6 +121,9 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent), ui_(new Ui::S
 
               auto page = current->data(0, kPageRole).value<QWidget*>();
               ui_->stackedWidget->setCurrentWidget(page ? page : ui_->todoPage);
+              if (auto area = qobject_cast<QScrollArea*>(page)) {
+                area->verticalScrollBar()->setValue(0);
+              }
             }
           });
 
@@ -109,10 +134,14 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent), ui_(new Ui::S
       new SettingsPageAccounts(ui_, this),
       new SettingsPageAdvanced(ui_, this),
       new SettingsPageApplication(ui_, this),
+      discordPage,
+      kodiPage,
       new SettingsPageLibrary(ui_, this),
+      mediaServerPage,
       new SettingsPageMediaPlayers(ui_, this),
       new SettingsPageRecognition(ui_, this),
       new SettingsPageStreaming(ui_, this),
+      torrentsPage,
       // clang-format on
   };
   for (auto page : pages_) {
@@ -120,11 +149,29 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent), ui_(new Ui::S
   }
 }
 
-void SettingsDialog::show(QWidget* parent) {
+void SettingsDialog::show(QWidget* parent, const QString& section) {
   auto dlg = new SettingsDialog(parent);
   dlg->setAttribute(Qt::WA_DeleteOnClose);
   dlg->setModal(true);
+  if (!section.isEmpty()) dlg->setCurrentSection(section);
   dlg->QDialog::show();
+}
+
+void SettingsDialog::setCurrentSection(const QString& section) {
+  const auto normalize = [](QString text) { return text.replace(u'-', u' ').simplified().toLower(); };
+  const auto name = normalize(section);
+
+  for (QTreeWidgetItemIterator it{ui_->treeWidget}; *it; ++it) {
+    if (normalize((*it)->text(0)) == name && !(*it)->isDisabled()) {
+      ui_->treeWidget->setCurrentItem(*it);
+      return;
+    }
+  }
+
+  // Tabs of the Torrents page (e.g. "filters")
+  if (torrentsPage_ && torrentsPage_->selectTab(name)) {
+    setCurrentSection(u"torrents"_s);
+  }
 }
 
 void SettingsDialog::accept() {

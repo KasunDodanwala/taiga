@@ -428,8 +428,7 @@ void MediaMenu::startNewRewatch() const {
 
 void MediaMenu::torrents() const {
   const auto& item = m_items.front();
-  mainWindow()->navigateTo(MainWindowPage::Torrents);
-  mainWindow()->searchBox()->setText(QString::fromStdString(anime::preferredTitle(item)));
+  mainWindow()->searchTorrents(QString::fromStdString(anime::preferredTitle(item)));
 }
 
 void MediaMenu::viewDetails() const {
@@ -648,8 +647,7 @@ void MediaMenu::addTorrentsItems() {
   if (isBatch()) return;
 
   // Torrents
-  addAction(theme.getIcon("rss_feed"), tr("Torrents"), this, &MediaMenu::torrents)
-      ->setDisabled(true);  // placeholder
+  addAction(theme.getIcon("rss_feed"), tr("Search torrents"), this, &MediaMenu::torrents);
 }
 
 void MediaMenu::addMetaItems() {

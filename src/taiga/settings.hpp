@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <QJsonArray>
 #include <QNetworkProxy>
 #include <chrono>
 #include <optional>
@@ -58,6 +59,50 @@ public:
   bool updatePauseWhenUnfocused() const;
   track::UpdateTrigger updateTrigger() const;
 
+  bool appCloseToTray() const;
+
+  bool kodiEnabled() const;
+  bool kodiDetection() const;
+  std::string kodiHost() const;
+  int kodiPort() const;
+  std::string kodiUsername() const;
+  std::string kodiPassword() const;
+  bool kodiPlayEpisodes() const;
+
+  std::string torrentFeedUrl() const;
+  std::string torrentSearchUrl() const;
+  bool torrentAutoCheckEnabled() const;
+  std::chrono::minutes torrentAutoCheckInterval() const;
+  std::string torrentNewAction() const;  // "notify", "download" or "none"
+  std::string torrentClientUrl() const;
+  std::string torrentClientUsername() const;
+  std::string torrentClientPassword() const;
+  std::string torrentDownloadPath() const;
+  bool torrentCreateSubfolder() const;
+  std::string torrentCategory() const;
+  bool torrentUseMagnet() const;
+  bool torrentFilterEnabled() const;
+  std::optional<QJsonArray> torrentFilters() const;
+
+  bool mediaServerEnabled() const;
+  std::string mediaServerName() const;
+  int mediaServerPort() const;
+  std::string mediaServerTranscoding() const;  // "none", "software" or "hardware"
+  std::string mediaServerVaapiDevice() const;
+  int mediaServerBitrate() const;  // kbit/s, for transcoding
+  bool mediaServerBurnSubtitles() const;
+  bool mediaServerVirtualFolders() const;
+  bool mediaServerLocalOnly() const;
+  bool mediaServerDetection() const;
+  std::string mediaServerUuid() const;
+
+  bool discordEnabled() const;
+  std::string discordApplicationId() const;
+  bool discordShowGroup() const;
+  bool discordShowTime() const;
+  bool discordShowUsername() const;
+  bool discordShowButton() const;
+
   void setAppColorScheme(const Qt::ColorScheme scheme) const;
   void setAppStyle(const std::string& style) const;
   void setDetectionEnabled(const bool enabled) const;
@@ -77,6 +122,49 @@ public:
   void setUpdateLibraryOnly(const bool enabled) const;
   void setUpdatePauseWhenUnfocused(const bool enabled) const;
   void setUpdateTrigger(const track::UpdateTrigger trigger) const;
+
+  void setAppCloseToTray(const bool enabled) const;
+
+  void setKodiEnabled(const bool enabled) const;
+  void setKodiDetection(const bool enabled) const;
+  void setKodiHost(const std::string& host) const;
+  void setKodiPort(const int port) const;
+  void setKodiUsername(const std::string& username) const;
+  void setKodiPassword(const std::string& password) const;
+  void setKodiPlayEpisodes(const bool enabled) const;
+
+  void setTorrentFeedUrl(const std::string& url) const;
+  void setTorrentSearchUrl(const std::string& url) const;
+  void setTorrentAutoCheckEnabled(const bool enabled) const;
+  void setTorrentAutoCheckInterval(const std::chrono::minutes interval) const;
+  void setTorrentNewAction(const std::string& action) const;
+  void setTorrentClientUrl(const std::string& url) const;
+  void setTorrentClientUsername(const std::string& username) const;
+  void setTorrentClientPassword(const std::string& password) const;
+  void setTorrentDownloadPath(const std::string& path) const;
+  void setTorrentCreateSubfolder(const bool enabled) const;
+  void setTorrentCategory(const std::string& category) const;
+  void setTorrentUseMagnet(const bool enabled) const;
+  void setTorrentFilterEnabled(const bool enabled) const;
+  void setTorrentFilters(const QJsonArray& filters) const;
+
+  void setMediaServerEnabled(const bool enabled) const;
+  void setMediaServerName(const std::string& name) const;
+  void setMediaServerPort(const int port) const;
+  void setMediaServerTranscoding(const std::string& mode) const;
+  void setMediaServerVaapiDevice(const std::string& device) const;
+  void setMediaServerBitrate(const int bitrate) const;
+  void setMediaServerBurnSubtitles(const bool enabled) const;
+  void setMediaServerVirtualFolders(const bool enabled) const;
+  void setMediaServerLocalOnly(const bool enabled) const;
+  void setMediaServerDetection(const bool enabled) const;
+
+  void setDiscordEnabled(const bool enabled) const;
+  void setDiscordApplicationId(const std::string& id) const;
+  void setDiscordShowGroup(const bool enabled) const;
+  void setDiscordShowTime(const bool enabled) const;
+  void setDiscordShowUsername(const bool enabled) const;
+  void setDiscordShowButton(const bool enabled) const;
 
 private:
   QString fileName() const override;

@@ -22,7 +22,6 @@
 #include <QCommandLineParser>
 #include <QLocalServer>
 #include <QPointer>
-#include <QSharedMemory>
 
 namespace gui {
 class MainWindow;
@@ -49,19 +48,20 @@ protected:
   bool notify(QObject* receiver, QEvent* event) override;
 
 private:
-  bool hasPreviousInstance();
-  void activatePreviousInstance();
+  bool activatePreviousInstance();
   void initLogger() const;
   void onNewConnection();
+  void openPage(const QString& name);
   void parseCommandLine();
 
   struct Options {
     bool debug = false;
+    bool minimized = false;
     bool verbose = false;
+    QString page;
   } options_;
 
   QCommandLineParser parser_;
-  QSharedMemory shared_memory_;
   QLocalServer local_server_;
   QPointer<gui::MainWindow> window_;
 };

@@ -20,6 +20,7 @@
 #include <QObject>
 
 class QDialog;
+class QWidget;
 
 namespace Ui {
 class SettingsDialog;
@@ -39,6 +40,10 @@ public:
   virtual void apply() const = 0;
 
 protected:
+  // Puts a page that is built in code into a scroll area, so that its contents keep their size
+  // (and wrapped text isn't cut off) when the dialog is smaller than the page.
+  static QWidget* scrollable(QWidget* content);
+
   Ui::SettingsDialog* ui_;
   QDialog* dialog_;
 };

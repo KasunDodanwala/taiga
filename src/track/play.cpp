@@ -25,9 +25,23 @@
 #include "base/log.hpp"
 #include "media/anime_db.hpp"
 #include "taiga/settings.hpp"
+#include "track/kodi.hpp"
 #include "track/scanner.hpp"
 
 namespace track {
+
+bool playFile(const QString& path) {
+  if (taiga::settings.kodiEnabled() && taiga::settings.kodiPlayEpisodes()) {
+    kodi::client()->openFile(path, [path](bool success, const QString& message) {
+      if (success) return;
+      qWarning() << "Could not play in Kodi:" << message;
+      QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    });
+    return true;
+  }
+
+  return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+}
 
 bool playEpisode(int animeId, int number) {
   const auto libraryFolders = taiga::settings.libraryFolders();
@@ -36,7 +50,7 @@ bool playEpisode(int animeId, int number) {
     const auto episodePath = findEpisode(QString::fromStdString(folder), animeId, number);
     if (episodePath) {
       qDebug() << "Found file:" << *episodePath;
-      return QDesktopServices::openUrl(QUrl::fromLocalFile(*episodePath));
+      return playFile(*episodePath);
     }
   }
 

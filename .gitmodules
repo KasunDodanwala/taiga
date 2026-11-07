@@ -4,7 +4,8 @@
 
 [submodule "anisthesia"]
 	path = deps/anisthesia
-	url = https://github.com/erengy/anisthesia.git
+	url = https://github.com/KasunDodanwala/anisthesia.git
+	branch = linux
 
 [submodule "anitomy"]
 	path = deps/anitomy

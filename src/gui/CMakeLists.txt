@@ -85,16 +85,29 @@ target_sources(taiga-gui PRIVATE
 	settings/settings_page_advanced.hpp
 	settings/settings_page_application.cpp
 	settings/settings_page_application.hpp
+	settings/settings_page_discord.cpp
+	settings/settings_page_discord.hpp
+	settings/settings_page_kodi.cpp
+	settings/settings_page_kodi.hpp
 	settings/settings_page_library.cpp
 	settings/settings_page_library.hpp
+	settings/settings_page_media_server.cpp
+	settings/settings_page_media_server.hpp
 	settings/settings_page_media_players.cpp
 	settings/settings_page_media_players.hpp
 	settings/settings_page_recognition.cpp
 	settings/settings_page_recognition.hpp
 	settings/settings_page_streaming.cpp
 	settings/settings_page_streaming.hpp
+	settings/settings_page_torrents.cpp
+	settings/settings_page_torrents.hpp
 	settings/settings_player_list.cpp
 	settings/settings_player_list.hpp
+
+	torrents/feed_filter_dialog.cpp
+	torrents/feed_filter_dialog.hpp
+	torrents/torrents_widget.cpp
+	torrents/torrents_widget.hpp
 
 	utils/format.cpp
 	utils/format.hpp

@@ -47,6 +47,20 @@ target_sources(taiga PRIVATE
 	media/anime_utils.hpp
 	media/anime.hpp
 
+	media_server/http_server.cpp
+	media_server/http_server.hpp
+	media_server/library.cpp
+	media_server/library.hpp
+	media_server/media_info.cpp
+	media_server/media_info.hpp
+	media_server/server.cpp
+	media_server/server.hpp
+	media_server/ssdp.cpp
+	media_server/ssdp.hpp
+
+	share/discord.cpp
+	share/discord.hpp
+
 	sync/anilist/anilist.cpp
 	sync/anilist/anilist.hpp
 	sync/anilist/anilist_auth.cpp
@@ -105,6 +119,14 @@ target_sources(taiga PRIVATE
 
 	track/episode.cpp
 	track/episode.hpp
+	track/feed.cpp
+	track/feed.hpp
+	track/feed_aggregator.cpp
+	track/feed_aggregator.hpp
+	track/feed_filter.cpp
+	track/feed_filter.hpp
+	track/kodi.cpp
+	track/kodi.hpp
 	track/media.cpp
 	track/media.hpp
 	track/media_player.cpp
@@ -125,6 +147,8 @@ target_sources(taiga PRIVATE
 	track/recognition_validate.hpp
 	track/scanner.cpp
 	track/scanner.hpp
+	track/torrent_client.cpp
+	track/torrent_client.hpp
 	track/update_decision.cpp
 	track/update_decision.hpp
 	track/update_session.cpp

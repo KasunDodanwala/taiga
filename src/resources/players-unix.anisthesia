@@ -1,0 +1,68 @@
+# Media players that only exist on Linux and other Unix-like systems.
+#
+# These complement Anisthesia's database, which describes Windows players. On Linux, Taiga detects
+# players by their executables and the files they have open (see Anisthesia's `linux_platform`),
+# so only `executables` and the `open_files` strategy matter here. Cross-platform players such as
+# Kodi, mpv, SMPlayer and VLC are already in Anisthesia's database.
+
+Celluloid
+	executables:
+		celluloid
+		gnome-mpv
+	strategies:
+		open_files
+
+Clapper
+	executables:
+		clapper
+	strategies:
+		open_files
+
+Dragon Player
+	executables:
+		dragon
+		dragonplayer
+	strategies:
+		open_files
+
+GNOME Videos
+	executables:
+		totem
+	strategies:
+		open_files
+
+Haruna
+	executables:
+		haruna
+	strategies:
+		open_files
+
+Kaffeine
+	executables:
+		kaffeine
+	strategies:
+		open_files
+
+MPlayer
+	executables:
+		mplayer
+	strategies:
+		open_files
+
+Parole
+	executables:
+		parole
+	strategies:
+		open_files
+
+QMPlay2
+	executables:
+		qmplay2
+	strategies:
+		open_files
+
+Showtime
+	executables:
+		showtime
+	strategies:
+		open_files

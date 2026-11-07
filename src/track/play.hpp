@@ -18,10 +18,13 @@
 
 #pragma once
 
+#include <QString>
 #include <optional>
 
 namespace track {
 
+// Opens the file in Kodi if enabled in settings, or in the default application otherwise.
+bool playFile(const QString& path);
 bool playEpisode(int animeId, int number);
 
 std::optional<int> nextEpisodeNumber(int animeId);

@@ -41,6 +41,7 @@ class NavigationWidget;
 class NowPlayingWidget;
 class SearchWidget;
 class StatusBarController;
+class TorrentsWidget;
 class TrayIcon;
 
 class MainWindow final : public QMainWindow {
@@ -66,6 +67,7 @@ public slots:
   void displayWindow();
   void navigateTo(MainWindowPage page);
   void navigateToListStatus(anime::list::Status status);
+  void searchTorrents(const QString& text);
   void updateTitle();
 
 private slots:
@@ -86,6 +88,7 @@ private:
   void initPage(MainWindowPage page);
   void initStatusbar();
   void initToolbar();
+  void initTorrents();
   void initTrayIcon();
 
   Ui::MainWindow* ui_ = nullptr;
@@ -99,7 +102,9 @@ private:
   QLineEdit* m_searchBox = nullptr;
   SearchWidget* m_searchWidget = nullptr;
   StatusBarController* m_statusBarController = nullptr;
+  TorrentsWidget* m_torrentsWidget = nullptr;
   TrayIcon* m_trayIcon = nullptr;
+  int m_torrentMessageId = 0;
 };
 
 MainWindow* mainWindow();

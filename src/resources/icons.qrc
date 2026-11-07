@@ -1,22 +1,28 @@
 <RCC>
   <qresource>
     <file>icons/account_circle.svg</file>
+    <file>icons/add.svg</file>
     <file>icons/add_box.svg</file>
     <file>icons/arrow_back.svg</file>
+    <file>icons/arrow_downward.svg</file>
     <file>icons/arrow_drop_down.svg</file>
     <file>icons/arrow_forward.svg</file>
+    <file>icons/arrow_upward.svg</file>
     <file>icons/bar_chart.svg</file>
-    <file>icons/check_circle.svg</file>
     <file>icons/check.svg</file>
+    <file>icons/check_circle.svg</file>
+    <file>icons/close.svg</file>
     <file>icons/cloud_download.svg</file>
     <file>icons/content_copy.svg</file>
     <file>icons/create_new_folder.svg</file>
     <file>icons/delete.svg</file>
+    <file>icons/download.svg</file>
     <file>icons/edit.svg</file>
     <file>icons/empty.svg</file>
     <file>icons/error.svg</file>
     <file>icons/export_notes.svg</file>
     <file>icons/favorite.svg</file>
+    <file>icons/filter_alt.svg</file>
     <file>icons/folder.svg</file>
     <file>icons/grid_view.svg</file>
     <file>icons/help.svg</file>
@@ -32,6 +38,7 @@
     <file>icons/pageview.svg</file>
     <file>icons/play_arrow.svg</file>
     <file>icons/progress_activity.svg</file>
+    <file>icons/remove.svg</file>
     <file>icons/rss_feed.svg</file>
     <file>icons/search.svg</file>
     <file>icons/settings.svg</file>
@@ -41,6 +48,7 @@
     <file>icons/sort.svg</file>
     <file>icons/sync.svg</file>
     <file>icons/taiga.png</file>
+    <file>icons/upload.svg</file>
     <file>icons/warning.svg</file>
     <file>icons/web_asset.svg</file>
   </qresource>

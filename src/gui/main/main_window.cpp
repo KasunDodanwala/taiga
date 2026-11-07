@@ -37,6 +37,7 @@
 #include "gui/main/status_bar_controller.hpp"
 #include "gui/search/search_widget.hpp"
 #include "gui/settings/settings_dialog.hpp"
+#include "gui/torrents/torrents_widget.hpp"
 #include "gui/utils/format.hpp"
 #include "gui/utils/theme.hpp"
 #include "gui/utils/tray_icon.hpp"
@@ -53,6 +54,7 @@
 #include "taiga/application.hpp"
 #include "taiga/session.hpp"
 #include "taiga/settings.hpp"
+#include "track/feed_aggregator.hpp"
 #include "track/media.hpp"
 #include "track/update_session.hpp"
 #include "ui_main_window.h"
@@ -109,6 +111,7 @@ void MainWindow::init() {
   initActions();
   initIcons();
   initTrayIcon();
+  initTorrents();
   initToolbar();
   initStatusbar();
   initNavigation();
@@ -222,6 +225,8 @@ void MainWindow::initPage(MainWindowPage page) {
       break;
 
     case MainWindowPage::Torrents:
+      m_torrentsWidget = new TorrentsWidget(ui_->torrentsPage);
+      init_page(ui_->torrentsPage, m_torrentsWidget);
       break;
 
     case MainWindowPage::Profile:
@@ -423,11 +428,66 @@ void MainWindow::initTrayIcon() {
           });
 }
 
+void MainWindow::initTorrents() {
+  using track::feed::Aggregator;
+  using track::feed::aggregator;
+
+  connect(aggregator(), &Aggregator::statusMessage, this, [this](const QString& text, bool busy) {
+    m_statusBarController->showMessage({
+        .source = StatusBarController::Source::Torrents,
+        .text = text,
+        .spin = busy,
+    });
+    // Results stay visible for a while, unless they're replaced by a newer message.
+    const int id = ++m_torrentMessageId;
+    if (!busy) {
+      QTimer::singleShot(std::chrono::seconds{10}, this, [this, id]() {
+        if (id == m_torrentMessageId) {
+          m_statusBarController->clearMessage(StatusBarController::Source::Torrents);
+        }
+      });
+    }
+  });
+
+  connect(aggregator(), &Aggregator::newTorrentsFound, this, [this](const QStringList& titles) {
+    if (!m_trayIcon) return;
+    auto message = titles.mid(0, 5).join(u"\n"_s);
+    if (titles.size() > 5) message += tr("\n...and %1 more").arg(titles.size() - 5);
+    m_trayIcon->showMessage(tr("New torrents available"), message);
+  });
+
+  connect(aggregator(), &Aggregator::downloadFinished, this,
+          [this](const QString& title, bool success, const QString& message) {
+            if (!m_trayIcon || isActiveWindow()) return;
+            if (success) {
+              m_trayIcon->showMessage(tr("Torrent added to qBittorrent"), title);
+            } else {
+              m_trayIcon->showMessage(tr("Could not add torrent"), u"%1\n%2"_s.arg(title, message));
+            }
+          });
+}
+
 void MainWindow::closeEvent(QCloseEvent* event) {
   taiga::session.setMainWindowGeometry(saveGeometry());
   if (m_listWidget) m_listWidget->saveState();
   if (m_searchWidget) m_searchWidget->saveState();
+
+  // Keep running in the system tray (e.g. to keep detecting media), unless we're quitting. Closing
+  // the window from the window manager is a spontaneous event, quitting the application is not.
+  if (event->spontaneous() && taiga::settings.appCloseToTray() &&
+      QSystemTrayIcon::isSystemTrayAvailable()) {
+    hide();
+    event->ignore();
+    return;
+  }
+
   event->accept();
+}
+
+void MainWindow::searchTorrents(const QString& text) {
+  navigateTo(MainWindowPage::Torrents);
+  m_searchBox->setText(text);
+  if (m_torrentsWidget) m_torrentsWidget->search(text);
 }
 
 void MainWindow::addNewFolder() {
@@ -460,7 +520,9 @@ void MainWindow::updateTitle() {
 }
 
 void MainWindow::displayWindow() {
+  if (!isVisible()) show();  // e.g. started minimized, or closed to the system tray
   setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+  raise();
   activateWindow();
 }
 

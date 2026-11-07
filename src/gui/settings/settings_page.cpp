@@ -18,10 +18,23 @@
 #include "settings_page.hpp"
 
 #include <QDialog>
+#include <QScrollArea>
 
 namespace gui {
 
 SettingsPage::SettingsPage(Ui::SettingsDialog* ui, QDialog* dialog)
     : QObject(dialog), ui_(ui), dialog_(dialog) {}
+
+QWidget* SettingsPage::scrollable(QWidget* content) {
+  auto area = new QScrollArea(content->parentWidget());
+  area->setFrameShape(QFrame::NoFrame);
+  area->setWidgetResizable(true);
+  area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  area->setWidget(content);
+  // Keep the dialog's background instead of the scroll area's
+  area->viewport()->setAutoFillBackground(false);
+  content->setAutoFillBackground(false);
+  return area;
+}
 
 }  // namespace gui
